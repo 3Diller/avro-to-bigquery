@@ -21,6 +21,9 @@ AVRO_TO_BIGQUERY_TYPES = {
 }
 
 
+RECORDS = {}
+
+
 def _convert_type(avro_type):
     """
     Convert an Avro type to a BigQuery type
@@ -51,9 +54,14 @@ def _convert_type(avro_type):
 
     if isinstance(avro_type, dict):
         field_type, fields, mode = _convert_complex_type(avro_type, mode)
+        if "name" in avro_type and avro_type["type"] == "record":
+            RECORDS[avro_type["name"]] = field_type, fields, mode
 
     else:
-        field_type = AVRO_TO_BIGQUERY_TYPES[avro_type]
+        if avro_type in AVRO_TO_BIGQUERY_TYPES:
+            field_type = AVRO_TO_BIGQUERY_TYPES[avro_type]
+        else:
+            field_type, fields, mode = RECORDS[avro_type]
 
     return field_type, mode, fields
 
