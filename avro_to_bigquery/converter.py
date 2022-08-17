@@ -20,6 +20,15 @@ AVRO_TO_BIGQUERY_TYPES = {
     "timestamp-micros": "TIMESTAMP",
 }
 
+SIMPLE_AVRO_TYPES = set((
+    "boolean",
+    "int",
+    "long",
+    "float",
+    "double",
+    "bytes",
+    "string",
+))
 
 RECORDS = {}
 
@@ -85,7 +94,10 @@ def _convert_complex_type(avro_type, mode):
             ]
         elif isinstance(avro_type["items"], dict):
             # complex array
-            if avro_type["items"]["type"] == "enum":
+            if (
+                avro_type["items"]["type"] == "enum" 
+                or avro_type["items"]["type"] in SIMPLE_AVRO_TYPES
+            ):
                 field_type = AVRO_TO_BIGQUERY_TYPES[avro_type["items"]["type"]]
             else:
                 field_type = "RECORD"
