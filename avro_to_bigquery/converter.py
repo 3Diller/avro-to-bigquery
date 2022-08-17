@@ -99,6 +99,12 @@ def _convert_complex_type(avro_type, mode):
                 or avro_type["items"]["type"] in SIMPLE_AVRO_TYPES
             ):
                 field_type = AVRO_TO_BIGQUERY_TYPES[avro_type["items"]["type"]]
+            elif avro_type["items"]["type"] == "array":
+                # inline arrays of arrays (that's what BQ does)
+                if isinstance(avro_type["items"]["items"], dict):
+                    field_type = AVRO_TO_BIGQUERY_TYPES[avro_type["items"]["items"]["type"]]
+                else:
+                    field_type = AVRO_TO_BIGQUERY_TYPES[avro_type["items"]["items"]]
             else:
                 field_type = "RECORD"
                 fields = tuple(
