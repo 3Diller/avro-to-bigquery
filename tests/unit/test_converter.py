@@ -119,7 +119,7 @@ def test_convert_avro_schema_to_bigquery_schema():
     assert s[0].name == "full_name"
     assert s[1].field_type == "INTEGER"
     assert s[2].description == "Just a boolean tester"
-    assert s[3].mode == "NULLABLE"
+    assert s[3].mode == "REQUIRED"
     assert s[4].name == "shoe_size"
     assert s[5].description is None
     assert s[6].field_type == "FLOAT"

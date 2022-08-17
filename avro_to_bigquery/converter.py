@@ -46,9 +46,11 @@ def _convert_type(avro_type):
                 "A Union type can only consist of two types, "
                 "one of them should be `null`"
             )
+    else:
+        mode = "REQUIRED"
 
     if isinstance(avro_type, dict):
-        field_type, fields, mode = _convert_complex_type(avro_type)
+        field_type, fields, mode = _convert_complex_type(avro_type, mode)
 
     else:
         field_type = AVRO_TO_BIGQUERY_TYPES[avro_type]
@@ -56,14 +58,13 @@ def _convert_type(avro_type):
     return field_type, mode, fields
 
 
-def _convert_complex_type(avro_type):
+def _convert_complex_type(avro_type, mode):
     """
     Convert a Avro complex type to a BigQuery type
     :param avro_type: The Avro type
     :return: The BigQuery type
     """
     fields = ()
-    mode = "NULLABLE"
 
     if avro_type["type"] == "record":
         field_type = "RECORD"
